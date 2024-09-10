@@ -10,6 +10,7 @@ namespace Homemade_DES
 {
     internal class DES
     {
+        //вопрос нужно ли переворачивать bitarray для перевода в текст?
         private byte[] key;
         private byte[] text;
         public DES(byte[] key,byte[] text) {
@@ -31,8 +32,33 @@ namespace Homemade_DES
             }
         }
 
-        public void Encoding()
+        public void coding(string text)
         {
+            List<BitArray> blockCoding = new List<BitArray>();
+            byte[] textByte = Encoding.UTF8.GetBytes(text);
+            BitArray test = new BitArray(textByte);
+            foreach (bool bitArray in test)
+            {
+                Console.Write(bitArray ? 1 : 0);
+            }
+            List<byte> textByteList  = textByte.ToList();
+            int blockCout = (textByte.Length + 7) / 8;
+            for (int i = 0; i < blockCout; i++)
+            {
+                byte[] temp = new byte[8];
+                textByteList.CopyTo(0,temp,0,textByteList.Count < 8 ? textByteList.Count : 8);
+                textByteList.RemoveRange(0,textByteList.Count < 8 ? textByteList.Count : 8);
+                BitArray bitTemp = new BitArray(temp);
+                Console.WriteLine(textByteList.Count < 8 ? textByteList.Count : 8);
+                blockCoding.Add(bitTemp);
+            }
+            foreach(bool bit in blockCoding[3])
+            {
+                Console.Write(bit ? 1 : 0);
+            }
+            Console.WriteLine("гуд");
+            Console.WriteLine(); 
+
 
         }
         public void Decoding() 
@@ -67,14 +93,15 @@ namespace Homemade_DES
                 {
                     if (countbit % 2 == 0)
                     {
-                        bitArray64[index] = true;
+                        bitArray64[index+1] = true;
                     }
                     else
                     {
-                        bitArray64[index] = false;
+                        bitArray64[index+1] = false;
                     }
+                    bitArray64[index] = b;
                     count = 0;
-                    index++;
+                    index = index+2;
                     countbit = 0;
                 }
                 else
@@ -84,9 +111,11 @@ namespace Homemade_DES
                         countbit++;
                     }
                     bitArray64[index] = b;
+                    count++;
                     index++;
                 }
             }
+            Console.WriteLine("");
             Console.WriteLine(bitArray64.Count);
             Console.WriteLine("-----------------");
             foreach (bool b in bitArray64)

@@ -13,7 +13,12 @@ namespace Homemade_DES
             byte[] dad = new byte[8];
             byte[] cad = new byte[8];
             DES des = new DES(dad,cad);
-            des.CreateKeys();
+            des.coding("aaaa");
+            //des.CreateKeys();
+            #region test
+
+
+
             ////Console.WriteLine("Hello, World!");
             //List<bool> list = new List<bool>();
             //byte[] bytes = new byte[7];
@@ -98,7 +103,7 @@ namespace Homemade_DES
             //{
             //    Console.Write(b ? 1 : 0);
             //}
-            
+
             //Console.WriteLine(cout);
             //Console.WriteLine(bytes);
             //foreach(byte b in bytes)
@@ -117,6 +122,7 @@ namespace Homemade_DES
             //    Console.WriteLine(b);
             //}
             //DES ds = new DES();
+            #endregion
         }
         //public static byte test2(byte value)
         //{
