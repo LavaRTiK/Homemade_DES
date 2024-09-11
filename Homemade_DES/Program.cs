@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace Homemade_DES
@@ -13,10 +14,37 @@ namespace Homemade_DES
             byte[] dad = new byte[8];
             byte[] cad = new byte[8];
             DES des = new DES(dad,cad);
-            des.coding("aaaa");
+            //des.coding("aaaa");
+            //Перестановка
+            byte[] test = new byte[8];
+            test = Encoding.UTF8.GetBytes("babababa");
+            BitArray bittest = new BitArray(test);
+            int[] mass = new int[]{58,50,42,34,26,18,10,2,60,52,44,36,28,20,12,4,62,54,46,38,30,22,14,6,64,56,48,40,32,24,16,8,57,49,41,33,25,17,9,1,59,51,43,35,27,19,11,3,61,53,45,37,29,21,13,5,63,55,47,39,31,23,15,7};
+            BitArray bitmix = new BitArray(64);
+            for (int i = 0; i < bittest.Length; i++)
+            {
+                bitmix[i] = bittest[mass[i]-1];
+            }
+            foreach (bool item in bittest)
+            {
+                Console.Write(item ? 1 : 0);
+            }
+            Console.WriteLine("-------------------------------------------------------------");
+            foreach (bool item in bitmix)
+            {
+                Console.Write(item ? 1 : 0);
+            }
+
             //des.CreateKeys();
             #region test
-
+            //Вывод текста с BitArayy
+            //byte[] test = new byte[8];
+            //test = Encoding.UTF8.GetBytes("aaaaaaaa");
+            //BitArray bittest = new BitArray(test);
+            //for (int i = bittest.Length-1; i >= 0; i--)
+            //{
+            //    Console.Write(bittest[i]? 1 : 0);
+            //}
 
 
             ////Console.WriteLine("Hello, World!");

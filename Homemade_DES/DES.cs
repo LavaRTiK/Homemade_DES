@@ -34,13 +34,10 @@ namespace Homemade_DES
 
         public void coding(string text)
         {
+            //Текст в блок битов List сохраняет блоки по 64 бит
             List<BitArray> blockCoding = new List<BitArray>();
             byte[] textByte = Encoding.UTF8.GetBytes(text);
             BitArray test = new BitArray(textByte);
-            foreach (bool bitArray in test)
-            {
-                Console.Write(bitArray ? 1 : 0);
-            }
             List<byte> textByteList  = textByte.ToList();
             int blockCout = (textByte.Length + 7) / 8;
             for (int i = 0; i < blockCout; i++)
@@ -52,12 +49,7 @@ namespace Homemade_DES
                 Console.WriteLine(textByteList.Count < 8 ? textByteList.Count : 8);
                 blockCoding.Add(bitTemp);
             }
-            foreach(bool bit in blockCoding[3])
-            {
-                Console.Write(bit ? 1 : 0);
-            }
-            Console.WriteLine("гуд");
-            Console.WriteLine(); 
+            
 
 
         }
