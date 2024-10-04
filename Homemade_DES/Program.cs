@@ -154,7 +154,33 @@ namespace Homemade_DES
                 bitArray[i] = bitString[i] == '1';
             }
             Console.WriteLine(bitArray.Length);
+            int[] massP = new int[] {16,7,20,21,29,12,28,17,1,15,23,26,5,18,31,10,2,8,24,14,32,27,3,9,19,13,30,6,22,11,4,25};
+            BitArray bitArrayP = new BitArray(32);
+            for (int i = 0; i < massP.Length; i++)
+            {
+                bitArrayP[i] = bitArray[massP[i]-1]; 
+            }
+            Console.WriteLine("ready");
+            //bitaaryp с левой частю
 
+            Console.WriteLine("");
+            foreach (bool item in bitArrayP)
+            {
+                Console.Write(item ? 1 : 0);
+            }
+            Console.WriteLine("");
+            foreach (bool item in bitLeft)
+            {
+                Console.Write(item?1:0);
+            }
+            Console.WriteLine("");
+            BitArray tested = new BitArray(bitLeft);
+            tested.Xor(bitArrayP);
+            foreach (bool item in tested)
+            {
+                Console.Write(item ? 1:0);
+            }
+            Console.WriteLine("");
 
 
 
