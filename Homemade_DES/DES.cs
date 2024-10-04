@@ -317,6 +317,36 @@ namespace Homemade_DES
             {
                 Console.Write(b ? 1 : 0);
             }
+            string test = Encoding.ASCII.GetString(ConvertToByteArray(bitArray64));
+            Console.WriteLine("");
+            Console.WriteLine("Початковий ключ  |"+strKey);
+            Console.WriteLine();
+
+            Console.WriteLine("Вихід ключа після операції  |" + test);
+        }
+        private static byte[] ConvertToByteArray(BitArray bitArray)
+        {
+            int bytes = (bitArray.Length + 7) / 8;
+            byte[] arr2 = new byte[bytes];
+            int bitIndex = 0;
+            int byteIndex = 0;
+
+            for (int i = 0; i < bitArray.Length; i++)
+            {
+                if (bitArray[i])
+                {
+                    arr2[byteIndex] |= (byte)(1 << bitIndex);
+                }
+
+                bitIndex++;
+                if (bitIndex == 8)
+                {
+                    bitIndex = 0;
+                    byteIndex++;
+                }
+            }
+
+            return arr2;
         }
     }
 }
