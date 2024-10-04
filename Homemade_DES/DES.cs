@@ -57,7 +57,7 @@ namespace Homemade_DES
         { 
             
         }
-        public void CreateKeys()
+        public void CreateKey()
         {
             byte[] randomMass = new byte[7];
             Random random = new Random();
