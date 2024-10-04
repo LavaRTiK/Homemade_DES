@@ -121,7 +121,8 @@ namespace Homemade_DES
                 }
             };
             //тут переменая где будут все 32 байта после цыкла
-            BitArray result1 = new BitArray(32);
+            List<int> list = new List<int>();   
+            BitArray bitArray = new BitArray(32);
             int couter = 0;
             for (int i = 0; i < 8; i++)
             {
@@ -138,13 +139,21 @@ namespace Homemade_DES
                 }
                 Console.WriteLine("");
                 int test13 = S_BOX[i, Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}"), Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}")];
+                list.Add(test13);
                 Console.WriteLine(test13 + "итерация" + i);
-                byte[] bytes = new byte[1];
-                bytes[0] = (byte)test13;
-                BitArray bitArray = new BitArray(bytes);
-
                 Console.WriteLine();
+                
             }
+            string bitString = "";
+            foreach (int value in list)
+            {
+                bitString += Convert.ToString(value, 2);
+            }
+            for (int i = 0; i < bitString.Length; i++)
+            {
+                bitArray[i] = bitString[i] == '1';
+            }
+            Console.WriteLine(bitArray.Length);
 
 
 
