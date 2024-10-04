@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -15,10 +16,41 @@ namespace Homemade_DES
             Console.OutputEncoding = Encoding.UTF8;
             byte[] dad = new byte[8];
             byte[] cad = new byte[8];
+            /*----------------------------------------
+             * 56
+             * 00100111111010111111100011001101101010011101110111110000
+             * 64
+-----------------
+            0010011101110101101111100001100110111010100101101110101111000010
+            Початковий ключ  |E4D71FB395BB0F
+            Вихід ключа після операції  |E4AE7D985D69D743
+             */
             DES des = new DES(dad,cad);
+            string key = "E4AE7D985D69D743";
+            byte[] byteKey = new byte[key.Length / 2];
+            List<BitArray> listKeys = new List<BitArray>();
+            for (int i = 0; i < byteKey.Length; i++)
+            {
+                byteKey[i] = Convert.ToByte(key.Substring(i * 2, 2), 16);
+            }
+            BitArray bitKey = new BitArray(byteKey);
+
+            Console.WriteLine("---------------" + bitKey.Length);
+            foreach (bool bit in bitKey)
+            {
+                Console.Write(bit ? 1 : 0);
+            }
+            int[] massPC1 = new int[] {57,49,41,33,25,17,9,1,58,50,42,34,26,18,10,2,59,51,43,35,27,19,11,3,60,52,44,36,63,55,47,39,31,23,15,7,62,54,46,38,30,22,14,6,61,53,45,37,29,21,13,5,28,20,12,4};
+            BitArray keyBit = new BitArray(56);
+            for (int i = 0; i < massPC1.Length; i++)
+            {
+                keyBit[i] = bitKey[massPC1[i]];
+            }
+            Console.WriteLine("--------- " + keyBit.Length);
+
             //des.coding("aaaa");
             //Перестановка
-            des.CreateKey();
+            //des.CreateKey();
             #region testcoding
             //byte[] test = new byte[8];
             //test = Encoding.UTF8.GetBytes("babababa");

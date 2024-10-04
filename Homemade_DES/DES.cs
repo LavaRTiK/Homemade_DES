@@ -32,8 +32,13 @@ namespace Homemade_DES
             }
         }
 
-        public void coding(string text)
+        public void coding(string text,string key)
         {
+            //GenereteList Keys
+            List<BitArray> listKeys = new List<BitArray>();
+            BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
+
+
             //Текст в блок битов List сохраняет блоки по 64 бит
             List<BitArray> blockCoding = new List<BitArray>();
             List<BitArray> listnewBlocksBits = new List<BitArray>();
@@ -106,8 +111,8 @@ namespace Homemade_DES
                         Console.Write(item ? 1 : 0);
                     }
                     BitArray result = new BitArray(48);
-                    BitArray key = new BitArray(48);
-                    result = bitERight.Xor(key); // тут ключ
+                    BitArray keys = new BitArray(48);
+                    result = bitERight.Xor(keys); // тут ключ
                     #region S_BOX
                     int[,,] S_BOX = new int[8, 4, 16]
                     {
@@ -260,7 +265,7 @@ namespace Homemade_DES
         { 
             
         }
-        public void CreateKey()
+        public string CreateKey()
         {
             byte[] randomMass = new byte[7];
             Random random = new Random();
@@ -317,14 +322,15 @@ namespace Homemade_DES
             {
                 Console.Write(b ? 1 : 0);
             }
-            string test = Encoding.ASCII.GetString(ConvertToByteArray(bitArray64));
+            string key = BitConverter.ToString(ConvertToByteArray(bitArray64)).Replace("-", "");
             Console.WriteLine("");
             Console.WriteLine("Початковий ключ  |"+strKey);
             Console.WriteLine();
 
-            Console.WriteLine("Вихід ключа після операції  |" + test);
+            Console.WriteLine("Вихід ключа після операції  |" + key);
+            return key;
         }
-        private static byte[] ConvertToByteArray(BitArray bitArray)
+        private byte[] ConvertToByteArray(BitArray bitArray)
         {
             int bytes = (bitArray.Length + 7) / 8;
             byte[] arr2 = new byte[bytes];
