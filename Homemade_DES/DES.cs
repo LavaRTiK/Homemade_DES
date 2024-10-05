@@ -40,7 +40,7 @@ namespace Homemade_DES
             List<BitArray> blockCoding = new List<BitArray>();
             List<BitArray> listnewBlocksBits = new List<BitArray>();
             byte[] textByte = Encoding.UTF8.GetBytes(text);
-            BitArray test = new BitArray(textByte);
+            //BitArray test = new BitArray(textByte);
             List<byte> textByteList  = textByte.ToList();
             int blockCout = (textByte.Length + 7) / 8;
             for (int i = 0; i < blockCout; i++)
@@ -55,7 +55,7 @@ namespace Homemade_DES
             for (int large = 0; large < blockCoding.Count; large++)
             {
                 //blockCoding воходяший кол блоков по 64
-                BitArray bittest = new BitArray(test);
+                BitArray bittest = new BitArray(blockCoding[large]);
                 int[] mass = new int[] { 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7 };
                 BitArray bitmix = new BitArray(64);
                 for (int i = 0; i < bittest.Length; i++)
@@ -108,7 +108,6 @@ namespace Homemade_DES
                         Console.Write(item ? 1 : 0);
                     }
                     BitArray result = new BitArray(48);
-                    BitArray keys = new BitArray(48);
                     result = bitERight.Xor(listKeys[iterator]); // тут ключ
                     #region S_BOX
                     int[,,] S_BOX = new int[8, 4, 16]
@@ -172,7 +171,8 @@ namespace Homemade_DES
                         BitArray dade = new BitArray(6);
                         for (int x = 0; x < 6; x++)
                         {
-                            result[couter] = dade[x];
+                            //result[couter] = dade[x];
+                            dade[x] = result[couter];
                             couter++;
                         }
                         Console.WriteLine("");
@@ -181,7 +181,9 @@ namespace Homemade_DES
                             Console.Write(item ? 1 : 0);
                         }
                         Console.WriteLine("");
-                        int test13 = S_BOX[i, Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}"), Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}")];
+                        Console.WriteLine(Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}",2) + "<- первый останий кордината");
+                        Console.WriteLine(Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}", 2)+ "<--- середина");
+                        int test13 = S_BOX[i, Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}",2), Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}",2)];
                         list.Add(test13);
                         Console.WriteLine(test13 + "итерация" + i);
                         Console.WriteLine();
@@ -245,7 +247,7 @@ namespace Homemade_DES
                     }
 
                 }
-                int[] massIP = new int[] { 40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25 };
+                int[] massIP = new int[] { 40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38,6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25 };
                 BitArray bitArrayIP = new BitArray(64);
                 for (int i = 0; i < bitArrayIP.Length; i++)
                 {
@@ -256,7 +258,7 @@ namespace Homemade_DES
             string codeText = "";
             foreach (BitArray item in listnewBlocksBits)
             {
-                codeText += BitConverter.ToString(ConvertToByteArray(item));
+                codeText += Convert.ToHexString(ConvertToByteArray(item));
             }
             return codeText;
 
