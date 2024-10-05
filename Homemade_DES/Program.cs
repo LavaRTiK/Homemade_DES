@@ -1,7 +1,9 @@
-﻿using System.Buffers.Text;
+﻿using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
@@ -14,39 +16,128 @@ namespace Homemade_DES
         {
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
-            byte[] dad = new byte[8];
-            byte[] cad = new byte[8];
-            /*----------------------------------------
-             * 56
-             * 00100111111010111111100011001101101010011101110111110000
-             * 64
------------------
-            0010011101110101101111100001100110111010100101101110101111000010
-            Початковий ключ  |E4D71FB395BB0F
-            Вихід ключа після операції  |E4AE7D985D69D743
-             */
-            DES des = new DES(dad,cad);
-            string key = "E4AE7D985D69D743";
-            byte[] byteKey = new byte[key.Length / 2];
-            List<BitArray> listKeys = new List<BitArray>();
-            for (int i = 0; i < byteKey.Length; i++)
-            {
-                byteKey[i] = Convert.ToByte(key.Substring(i * 2, 2), 16);
-            }
-            BitArray bitKey = new BitArray(byteKey);
+            DES des = new DES();
+            string key = des.CreateKey();
+            Console.WriteLine("Ключ " + key);
+            string text = "sadasdasdasddradasqeq";;
+            Console.WriteLine("початковий текст");
+            string erptext = des.Coding(text,key);
+            Console.WriteLine("erptext =" + erptext);
+            //            byte[] dad = new byte[8];
+            //            byte[] cad = new byte[8];
+            //            /*----------------------------------------
+            //             * 56
+            //             * 00100111111010111111100011001101101010011101110111110000
+            //             * 64
+            //-----------------
+            //            0010011101110101101111100001100110111010100101101110101111000010
+            //            Початковий ключ  |E4D71FB395BB0F
+            //            Вихід ключа після операції  |E4AE7D985D69D743
+            //             */
+            //            DES des = new DES(dad, cad);
+            //            string key = "E4AE7D985D69D743";
+            //            byte[] byteKey = new byte[key.Length / 2];
+            //            List<BitArray> listKeys = new List<BitArray>();
+            //            for (int i = 0; i < byteKey.Length; i++)
+            //            {
+            //                byteKey[i] = Convert.ToByte(key.Substring(i * 2, 2), 16);
+            //            }
+            //            BitArray bitKey = new BitArray(byteKey);
 
-            Console.WriteLine("---------------" + bitKey.Length);
-            foreach (bool bit in bitKey)
-            {
-                Console.Write(bit ? 1 : 0);
-            }
-            int[] massPC1 = new int[] {57,49,41,33,25,17,9,1,58,50,42,34,26,18,10,2,59,51,43,35,27,19,11,3,60,52,44,36,63,55,47,39,31,23,15,7,62,54,46,38,30,22,14,6,61,53,45,37,29,21,13,5,28,20,12,4};
-            BitArray keyBit = new BitArray(56);
-            for (int i = 0; i < massPC1.Length; i++)
-            {
-                keyBit[i] = bitKey[massPC1[i]];
-            }
-            Console.WriteLine("--------- " + keyBit.Length);
+            //            Console.WriteLine("---------------" + bitKey.Length);
+            //            foreach (bool bit in bitKey)
+            //            {
+            //                Console.Write(bit ? 1 : 0);
+            //            }
+            //            int[] massPC1 = new int[] { 57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4 };
+            //            BitArray keyBit = new BitArray(56);
+            //            for (int i = 0; i < massPC1.Length; i++)
+            //            {
+            //                keyBit[i] = bitKey[massPC1[i] - 1];
+            //            }
+            //            BitArray bitArrayC = new BitArray(28);
+            //            BitArray bitArrayD = new BitArray(28);
+            //            int couter = 0;
+            //            for (int i = 0; i < keyBit.Length; i++)
+            //            {
+            //                if (i < 28)
+            //                {
+            //                    bitArrayC[i] = keyBit[couter];
+            //                    couter++;
+            //                    if (couter > 27)
+            //                    {
+            //                        couter = 0;
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    bitArrayD[couter] = keyBit[i];
+            //                    couter++;
+            //                }
+            //            }
+            //            int[] massKeyGenerate = new int[] {14,17,11,24,1,5,3,28,15,6,21,10,23,19,12,4,26,8,16,7,27,20,13,2,41,52,31,37,47,55,30,40,51,45,33,48,44,49,39,56,34,53,46,42,50,36,29,32};
+            //            int[] massGet = new int[] {4,17,11,24,1,5,3,28,15,6,21,10,23,19,12,4,26,8,16,7,27,20,13,2,41,52,31,37,47,55,30,40,51,45,33,48,44,49,39,56,34,53,46,42,50,36,29,32};
+            //            for (int i = 0; i < 16; i++)
+            //            {
+            //                if (i == 0 || i == 1 || i == 8 || i == 15)
+            //                {
+            //                    bitArrayC = LeftShiftC(bitArrayC, 1);
+            //                    bitArrayD = LeftShiftC(bitArrayC, 1);
+            //                }
+            //                else
+            //                {
+            //                    bitArrayC = LeftShiftC(bitArrayC, 2);
+            //                    bitArrayD = LeftShiftC(bitArrayD, 2);
+            //                }
+            //                BitArray bitArrayFoundKey = new BitArray(56);
+            //                couter = 0;
+            //                for (int x = 0; x < bitArrayFoundKey.Length; x++)
+            //                {
+            //                    if (x < 28)
+            //                    {
+            //                        bitArrayFoundKey[x] = bitArrayC[couter];
+            //                        couter++;
+            //                        if(couter > 27)
+            //                        {
+            //                            couter = 0;
+            //                        }
+            //                    }
+            //                    else
+            //                    {
+            //                        bitArrayFoundKey[x] = bitArrayD[couter];
+            //                        couter++;
+            //                    }
+            //                }
+            //                BitArray bitArrayKey = new BitArray(48); 
+            //                for (int p = 0; p < massKeyGenerate.Length; p++)
+            //                {
+            //                    bitArrayKey[p] = bitArrayFoundKey[massKeyGenerate[p] - 1];
+            //                }
+            //                listKeys.Add(bitArrayKey);
+
+            //                Console.WriteLine("test-------");
+            //                Console.WriteLine(bitArrayFoundKey.Length + "  <----- bit arrayfound key");
+            //            }
+
+            //            Console.WriteLine("----------" + bitArrayC.Length);
+
+            //            Console.WriteLine("-------");
+
+            //            Console.WriteLine("-----------" + bitArrayD.Length);
+
+            //            Console.WriteLine("-------");
+
+            //            Console.WriteLine("--------- " + keyBit.Length);
+
+            //            foreach (var item in listKeys)
+            //            {
+            //                Console.WriteLine("key");
+            //                foreach (bool bit in item)
+            //                {
+            //                    Console.Write(bit ? 1 : 0);
+            //                }
+            //                Console.WriteLine();
+            //            }
 
             //des.coding("aaaa");
             //Перестановка
@@ -383,6 +474,16 @@ namespace Homemade_DES
         //        return (byte)(value | 0b01111111);
         //    }
         //}
+        public static BitArray LeftShiftC(BitArray bits, int count)
+        {
+            int length = bits.Length;
+            BitArray result = new BitArray(length);
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = bits[(i+count)% length];
+            }
+            return result;
+        }
         public static int test(byte value)
         {
             int cout = 0;
