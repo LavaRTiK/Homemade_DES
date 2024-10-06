@@ -18,16 +18,26 @@ namespace Homemade_DES
             Console.OutputEncoding = Encoding.UTF8;
             DES des = new DES();
             string key = des.CreateKey();
-            Console.WriteLine("Ключ " + key);
-            string text = "sadasdasdasddradasqeq";;
-            Console.WriteLine("початковий текст");
+            string text = "sadasdasdasddradasqeq";
+            byte[] buffer = UnicodeEncoding.UTF8.GetBytes(text);
             string erptext = des.Coding(text,key);
+            Console.WriteLine("test ");
+            Console.WriteLine(Convert.ToHexString(buffer));
+            string decrypt = des.Decoding(erptext, key);
+            Console.WriteLine("Ключ " + key);
             Console.WriteLine("erptext =" + erptext);
+            Console.WriteLine("початковий текст " + text);
+            Console.WriteLine("decrypt= " + decrypt);
+            byte[] test = UnicodeEncoding.UTF8.GetBytes(text);
+            BitArray testt = new BitArray(test);
+            Console.WriteLine("вышел текст?");
+            Console.WriteLine(UnicodeEncoding.UTF8.GetString(ConvertToByteArray(testt)));
+            Console.ReadLine();
             //            byte[] dad = new byte[8];
             //            byte[] cad = new byte[8];
             //            /*----------------------------------------
             //             * 56
-            //             * 00100111111010111111100011001101101010011101110111110000
+            //             * 00 100111111010111111100011001101101010011101110111110000
             //             * 64
             //-----------------
             //            0010011101110101101111100001100110111010100101101110101111000010
@@ -474,6 +484,21 @@ namespace Homemade_DES
         //        return (byte)(value | 0b01111111);
         //    }
         //}
+        private static byte[] ConvertToByteArray(BitArray bitArray)
+        {
+            int bytes = (bitArray.Length + 7) / 8;
+            byte[] arr2 = new byte[bytes];
+
+            for (int i = 0; i < bitArray.Length; i++)
+            {
+                if (bitArray[i])
+                {
+                    arr2[i / 8] |= (byte)(1 << (i % 8));
+                }
+            }
+
+            return arr2;
+        }
         public static BitArray LeftShiftC(BitArray bits, int count)
         {
             int length = bits.Length;
