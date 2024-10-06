@@ -255,10 +255,17 @@ namespace Homemade_DES
                 }
                 listnewBlocksBits.Add(bitArrayIP);
             }
+            //что-то тут не так выходит нет тот бинарный код в codetext 
+            Console.WriteLine("");
             string codeText = "";
             foreach (BitArray item in listnewBlocksBits)
             {
-                codeText += Convert.ToHexString(ConvertToByteArray(item));
+                codeText += Encoding.Unicode.GetString(ConvertBitArrayToByteArray2(item));
+                foreach (bool bit in item)
+                {
+                    Console.Write(bit ? 1 : 0);
+                }
+                Console.WriteLine("test");
             }
             return codeText;
 
@@ -656,6 +663,30 @@ namespace Homemade_DES
             }
             return result;
         }
+        private byte[] ConvertBitArrayToByteArray2(BitArray bitArray)
+        {
+            int bytes = (bitArray.Length + 7) / 8;
+            byte[] arr2 = new byte[bytes];
+            int bitIndex = 0;
+            int byteIndex = 0;
+
+            for (int i = 0; i < bitArray.Length; i++)
+            {
+                if (bitArray[i])
+                {
+                    arr2[byteIndex] |= (byte)(1 << bitIndex);
+                }
+
+                bitIndex++;
+                if (bitIndex == 8)
+                {
+                    bitIndex = 0;
+                    byteIndex++;
+                }
+            }
+
+            return arr2;
+        }
         private byte[] ConvertToByteArray(BitArray bitArray)
         {
             int bytes = (bitArray.Length + 7) / 8;
@@ -670,6 +701,21 @@ namespace Homemade_DES
             }
 
             return arr2;
+        }
+        private byte[] ConvertBitArrayToByteArray(BitArray bitArray)
+        {
+            int bytes = (bitArray.Length + 7) / 8; // Количество байтов
+            byte[] byteArray = new byte[bytes]; // Создаем массив байтов
+
+            for (int i = 0; i < bitArray.Length; i++)
+            {
+                if (bitArray[i]) // Если бит установлен в 1
+                {
+                    byteArray[i / 8] |= (byte)(1 << (i % 8)); // Устанавливаем соответствующий бит в байте
+                }
+            }
+
+            return byteArray; // Возвращаем массив байтов
         }
 
     }
