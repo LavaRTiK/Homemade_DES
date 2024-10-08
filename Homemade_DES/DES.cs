@@ -52,6 +52,18 @@ namespace Homemade_DES
                 Console.WriteLine(textByteList.Count < 8 ? textByteList.Count : 8);
                 blockCoding.Add(bitTemp);
             }
+            Console.WriteLine("");
+            Console.WriteLine("Биты до зашиврованния");
+            foreach (BitArray bitArray in blockCoding)
+            {
+                Console.WriteLine("");
+                foreach (bool bit in bitArray)
+                {
+                    Console.Write(bit?1:0);
+                }
+            }
+            Console.WriteLine("");
+            Console.WriteLine("end");
             for (int large = 0; large < blockCoding.Count; large++)
             {
                 //blockCoding воходяший кол блоков по 64
@@ -241,7 +253,7 @@ namespace Homemade_DES
                         }
                         else
                         {
-                            rsultRound[i] = bitArrayP[rsultCounter];
+                            rsultRound[i] = tested[rsultCounter];
                             rsultCounter++;
                         }
                     }
@@ -258,15 +270,20 @@ namespace Homemade_DES
             //что-то тут не так выходит нет тот бинарный код в codetext 
             Console.WriteLine("");
             string codeText = "";
+            Console.WriteLine("БЛКОИ ОТПРАВИЛИСЬ");
             foreach (BitArray item in listnewBlocksBits)
             {
-                codeText += Encoding.Unicode.GetString(ConvertBitArrayToByteArray2(item));
+                codeText += Convert.ToHexString(ConvertBitArrayToByteArray2(item));
                 foreach (bool bit in item)
                 {
                     Console.Write(bit ? 1 : 0);
                 }
-                Console.WriteLine("test");
+                //Console.WriteLine("test");
+                //передача
+                //byte[] test1 = Convert.FromHexString(codeText);
+                //BitArray testing = new BitArray(test1);
             }
+            Console.WriteLine("END");
             return codeText;
 
 
@@ -274,12 +291,12 @@ namespace Homemade_DES
         public string Decoding(string text,string key) 
         {
             List<BitArray> listKeys = CreateKeys(key);
-            BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
+            //BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
             listKeys.Reverse();
             //Текст в блок битов List сохраняет блоки по 64 бит
             List<BitArray> blockCoding = new List<BitArray>();
             List<BitArray> listnewBlocksBits = new List<BitArray>();
-            byte[] textByte = Encoding.UTF8.GetBytes(text);
+            byte[] textByte = Convert.FromHexString(text);
             //BitArray test = new BitArray(textByte);
             List<byte> textByteList = textByte.ToList();
             int blockCout = (textByte.Length + 7) / 8;
@@ -292,6 +309,17 @@ namespace Homemade_DES
                 Console.WriteLine(textByteList.Count < 8 ? textByteList.Count : 8);
                 blockCoding.Add(bitTemp);
             }
+            Console.WriteLine("БЛОКИ КОТОРЫЕ ПРИЙШЛИ");
+            foreach (BitArray bitArray1 in blockCoding)
+            {
+                Console.WriteLine("");
+                foreach (bool bit in bitArray1)
+                {
+                    Console.Write(bit ? 1:0);
+                }
+            }
+            Console.WriteLine("");
+            Console.WriteLine("end");
             for (int large = 0; large < blockCoding.Count; large++)
             {
                 //blockCoding воходяший кол блоков по 64
@@ -428,7 +456,7 @@ namespace Homemade_DES
                         int test13 = S_BOX[i, Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}", 2), Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}", 2)];
                         list.Add(test13);
                         Console.WriteLine(test13 + "итерация" + i);
-                        Console.WriteLine();
+                        Console.WriteLine("");
 
                     }
                     string bitString = "";
@@ -474,7 +502,7 @@ namespace Homemade_DES
                     {
                         if (i <= 31)
                         {
-                            rsultRound[i] = bitArrayP[rsultCounter];
+                            rsultRound[i] = tested[rsultCounter];
                             rsultCounter++;
                             if (rsultCounter > 31)
                             {
@@ -498,9 +526,15 @@ namespace Homemade_DES
                 listnewBlocksBits.Add(bitArrayIP);
             }
             string codeText = "";
+            Console.WriteLine("биты после рошифровки");
             foreach (BitArray item in listnewBlocksBits)
             {
                 codeText += UnicodeEncoding.UTF8.GetString(ConvertToByteArray(item));
+                Console.WriteLine("");
+                foreach (bool bit in item)
+                {
+                    Console.Write(bit? 1: 0);
+                }
             }
             return codeText;
         }

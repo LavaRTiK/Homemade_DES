@@ -20,18 +20,13 @@ namespace Homemade_DES
             string key = des.CreateKey();
             string text = "sadasdasdasddradasqeq";
             byte[] buffer = UnicodeEncoding.UTF8.GetBytes(text);
-            string erptext = des.Coding(text,key);
-            Console.WriteLine("test ");
+            string erptext = des.Coding(text, key);
             Console.WriteLine(Convert.ToHexString(buffer));
             string decrypt = des.Decoding(erptext, key);
             Console.WriteLine("Ключ " + key);
             Console.WriteLine("erptext =" + erptext);
             Console.WriteLine("початковий текст " + text);
             Console.WriteLine("decrypt= " + decrypt);
-            byte[] test = UnicodeEncoding.UTF8.GetBytes(text);
-            BitArray testt = new BitArray(test);
-            Console.WriteLine("вышел текст?");
-            Console.WriteLine(UnicodeEncoding.UTF8.GetString(ConvertToByteArray(testt)));
             Console.ReadLine();
             //            byte[] dad = new byte[8];
             //            byte[] cad = new byte[8];
@@ -484,6 +479,30 @@ namespace Homemade_DES
         //        return (byte)(value | 0b01111111);
         //    }
         //}
+        private static byte[] ConvertBitArrayToByteArray2(BitArray bitArray)
+        {
+            int bytes = (bitArray.Length + 7) / 8;  // округление вверх
+            byte[] byteArray = new byte[bytes];
+            bitArray.CopyTo(byteArray, 0);  // стандартный метод для копирования в байты
+            return byteArray;
+        }
+
+        // Метод для конвертации байтов в BitArray
+        private static BitArray ConvertByteArrayToBitArray(byte[] byteArray)
+        {
+            return new BitArray(byteArray);
+        }
+
+        // Метод для конвертации BitArray в строковое представление битов
+        private static string BitArrayToBinaryString(BitArray bitArray)
+        {
+            string result = "";
+            foreach (bool bit in bitArray)
+            {
+                result += bit ? "1" : "0";
+            }
+            return result;
+        }
         private static byte[] ConvertToByteArray(BitArray bitArray)
         {
             int bytes = (bitArray.Length + 7) / 8;
