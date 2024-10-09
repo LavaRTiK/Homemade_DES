@@ -29,17 +29,23 @@ namespace Homemade_DES
         //    }
         //}
 
-        public string Coding(string text,string key)
+        public string Coding(byte[] text, byte[] key)
         {
             //GenereteList Keys
             List<BitArray> listKeys = CreateKeys(key);
+            Console.WriteLine();
+            foreach (var roundkey in listKeys)
+            {
+                Console.WriteLine(string.Join("", roundkey.ToBits()));
+            }
+
             //BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
 
 
             //Текст в блок битов List сохраняет блоки по 64 бит
             List<BitArray> blockCoding = new List<BitArray>();
             List<BitArray> listnewBlocksBits = new List<BitArray>();
-            byte[] textByte = Encoding.UTF8.GetBytes(text);
+            byte[] textByte = text;// Encoding.UTF8.GetBytes(text);
             //BitArray test = new BitArray(textByte);
             List<byte> textByteList  = textByte.ToList();
             int blockCout = (textByte.Length + 7) / 8;
@@ -290,7 +296,7 @@ namespace Homemade_DES
         }
         public string Decoding(string text,string key) 
         {
-            List<BitArray> listKeys = CreateKeys(key);
+            List<BitArray> listKeys = CreateKeys([1]);
             //BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
             listKeys.Reverse();
             //Текст в блок битов List сохраняет блоки по 64 бит
@@ -603,28 +609,32 @@ namespace Homemade_DES
             Console.WriteLine("Вихід ключа після операції  |" + key);
             return key;
         }
-        private List<BitArray> CreateKeys(string key)
+        private List<BitArray> CreateKeys(byte[] key)
         {
             List<BitArray> listKeys = new List<BitArray>();
-            byte[] byteKey = new byte[key.Length / 2];
+            //byte[] byteKey = new byte[key.Length / 2];
 
-            for (int i = 0; i < byteKey.Length; i++)
-            {
-                byteKey[i] = Convert.ToByte(key.Substring(i * 2, 2), 16);
-            }
-            BitArray bitKey = new BitArray(byteKey);
-
-            Console.WriteLine("---------------" + bitKey.Length);
-            foreach (bool bit in bitKey)
-            {
-                Console.Write(bit ? 1 : 0);
-            }
+            //for (int i = 0; i < byteKey.Length; i++)
+            //{
+            //    byteKey[i] = Convert.ToByte(key.Substring(i * 2, 2), 16);
+            //}
+            BitArray bitKey = new BitArray(key);
+            BitArray a = new BitArray(new byte[] {19});
+            Console.WriteLine($"Key: {string.Join("", bitKey.ToBits())}");
+            //Console.WriteLine("---------------" + bitKey.Length);
+            //foreach (bool bit in bitKey)
+            //{
+            //    Console.Write(bit ? 1 : 0);
+            //}
             int[] massPC1 = new int[] { 57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4 };
             BitArray keyBit = new BitArray(56);
             for (int i = 0; i < massPC1.Length; i++)
             {
                 keyBit[i] = bitKey[massPC1[i] - 1];
             }
+            Console.WriteLine();
+            Console.WriteLine($"Key after pc1: {string.Join("", keyBit.ToBits())}");
+
             BitArray bitArrayC = new BitArray(28);
             BitArray bitArrayD = new BitArray(28);
             int couter = 0;
@@ -645,8 +655,6 @@ namespace Homemade_DES
                     couter++;
                 }
             }
-            int[] massKeyGenerate = new int[] { 14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32 };
-            int[] massGet = new int[] { 4, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32 };
             for (int i = 0; i < 16; i++)
             {
                 if (i == 0 || i == 1 || i == 8 || i == 15)
@@ -659,26 +667,14 @@ namespace Homemade_DES
                     bitArrayC = LeftShiftC(bitArrayC, 2);
                     bitArrayD = LeftShiftC(bitArrayD, 2);
                 }
-                BitArray bitArrayFoundKey = new BitArray(56);
-                couter = 0;
-                for (int x = 0; x < bitArrayFoundKey.Length; x++)
-                {
-                    if (x < 28)
-                    {
-                        bitArrayFoundKey[x] = bitArrayC[couter];
-                        couter++;
-                        if (couter > 27)
-                        {
-                            couter = 0;
-                        }
-                    }
-                    else
-                    {
-                        bitArrayFoundKey[x] = bitArrayD[couter];
-                        couter++;
-                    }
-                }
+                Console.WriteLine($"C{i}: {string.Join("", bitArrayC.ToBits())}");
+                Console.WriteLine($"D{i}: {string.Join("", bitArrayD.ToBits())}");
+                Console.WriteLine();
+
+                BitArray bitArrayFoundKey = bitArrayC.Append(bitArrayD);
+                
                 BitArray bitArrayKey = new BitArray(48);
+                int[] massKeyGenerate = new int[] { 14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10, 23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2, 41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48, 44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32 };
                 for (int p = 0; p < massKeyGenerate.Length; p++)
                 {
                     bitArrayKey[p] = bitArrayFoundKey[massKeyGenerate[p] - 1];
@@ -693,7 +689,13 @@ namespace Homemade_DES
             BitArray result = new BitArray(length);
             for (int i = 0; i < length; i++)
             {
-                result[i] = bits[(i + count) % length];
+                var index = i - count;
+                if (index < 0)
+                {
+                    index += length;
+                }
+
+                result[index] = bits[i];
             }
             return result;
         }

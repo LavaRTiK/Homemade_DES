@@ -17,16 +17,17 @@ namespace Homemade_DES
             Console.InputEncoding = Encoding.UTF8;
             Console.OutputEncoding = Encoding.UTF8;
             DES des = new DES();
-            string key = des.CreateKey();
-            string text = "sadasdasdasddradasqeq";
-            byte[] buffer = UnicodeEncoding.UTF8.GetBytes(text);
+            byte[] key =Convert.FromHexString("133457799BBCDFF1");
+            byte[] text =Convert.FromHexString("8787878787878787");
+
+            //byte[] buffer = UnicodeEncoding.UTF8.GetBytes(text);
             string erptext = des.Coding(text, key);
-            Console.WriteLine(Convert.ToHexString(buffer));
-            string decrypt = des.Decoding(erptext, key);
+           // Console.WriteLine(Convert.ToHexString(buffer));
+           // string decrypt = des.Decoding(erptext, key);
             Console.WriteLine("Ключ " + key);
             Console.WriteLine("erptext =" + erptext);
             Console.WriteLine("початковий текст " + text);
-            Console.WriteLine("decrypt= " + decrypt);
+         //   Console.WriteLine("decrypt= " + decrypt);
             Console.ReadLine();
             //            byte[] dad = new byte[8];
             //            byte[] cad = new byte[8];
