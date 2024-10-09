@@ -38,23 +38,18 @@ namespace Homemade_DES
             {
                 Console.WriteLine(string.Join("", roundkey.ToBits()));
             }
-
-            //BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
-
-
             //Текст в блок битов List сохраняет блоки по 64 бит
             List<BitArray> blockCoding = new List<BitArray>();
             List<BitArray> listnewBlocksBits = new List<BitArray>();
             byte[] textByte = text;// Encoding.UTF8.GetBytes(text);
-            //BitArray test = new BitArray(textByte);
             List<byte> textByteList  = textByte.ToList();
-            int blockCout = (textByte.Length + 7) / 8;
-            for (int i = 0; i < blockCout; i++)
+            int blockCount = (textByte.Length + 7) / 8;
+            for (int i = 0; i < blockCount; i++)
             {
                 byte[] temp = new byte[8];
                 textByteList.CopyTo(0,temp,0,textByteList.Count < 8 ? textByteList.Count : 8);
                 textByteList.RemoveRange(0,textByteList.Count < 8 ? textByteList.Count : 8);
-                BitArray bitTemp = new BitArray(temp);
+                BitArray bitTemp = new BitArray(64).Fill(temp);
                 Console.WriteLine(textByteList.Count < 8 ? textByteList.Count : 8);
                 blockCoding.Add(bitTemp);
             }
@@ -73,21 +68,23 @@ namespace Homemade_DES
             for (int large = 0; large < blockCoding.Count; large++)
             {
                 //blockCoding воходяший кол блоков по 64
-                BitArray bittest = new BitArray(blockCoding[large]);
-                int[] mass = new int[] { 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7 };
-                BitArray bitmix = new BitArray(64);
-                for (int i = 0; i < bittest.Length; i++)
+                BitArray currentBlock = new BitArray(blockCoding[large]);
+                int[] massIP = new int[] { 58, 50, 42, 34, 26, 18, 10, 2, 60, 52, 44, 36, 28, 20, 12, 4, 62, 54, 46, 38, 30, 22, 14, 6, 64, 56, 48, 40, 32, 24, 16, 8, 57, 49, 41, 33, 25, 17, 9, 1, 59, 51, 43, 35, 27, 19, 11, 3, 61, 53, 45, 37, 29, 21, 13, 5, 63, 55, 47, 39, 31, 23, 15, 7 };
+                BitArray bitArrayIP = new BitArray(64);
+                for (int i = 0; i < currentBlock.Length; i++)
                 {
-                    bitmix[i] = bittest[mass[i] - 1];
+                    bitArrayIP[i] = currentBlock[massIP[i] - 1];
                 }
-                BitArray rsultRound = new BitArray(bitmix);
+                Console.WriteLine($"BitIp: {string.Join("", bitArrayIP.ToBits())}");
+                BitArray rsultRound = new BitArray(bitArrayIP);
                 //тут цикл
                 for (int iterator = 0; iterator < 16; iterator++)
                 {
+                    Console.WriteLine("итерация"+iterator);
                     BitArray bitLeft = new BitArray(32);
                     BitArray bitRight = new BitArray(32);
                     int bitcount = 0;
-                    for (int i = 0; i < rsultRound.Length - 1; i++)
+                    for (int i = 0; i < rsultRound.Length; i++)
                     {
                         if (i <= 31)
                         {
@@ -104,29 +101,18 @@ namespace Homemade_DES
                             bitcount++;
                         }
                     }
-
-                    foreach (bool item in bitLeft)
-                    {
-                        Console.Write(item ? 1 : 0);
-                    }
-                    Console.WriteLine("-----------------------------------");
-                    foreach (bool item in bitRight)
-                    {
-                        Console.Write(item ? 1 : 0);
-                    }
+                    Console.WriteLine($"BitLeft: {string.Join("", bitLeft.ToBits())}");
+                    Console.WriteLine($"BitRight: {string.Join("", bitRight.ToBits())}");
                     int[] massE = new int[] { 32, 1, 2, 3, 4, 5, 4, 5, 6, 7, 8, 9, 8, 9, 10, 11, 12, 13, 12, 13, 14, 15, 16, 17, 16, 17, 18, 19, 20, 21, 20, 21, 22, 23, 24, 25, 24, 25, 26, 27, 28, 29, 28, 29, 30, 31, 32, 1 };
                     BitArray bitERight = new BitArray(48);
                     for (int i = 0; i < massE.Length; i++)
                     {
                         bitERight[i] = bitRight[massE[i] - 1];
                     }
-                    Console.WriteLine("");
-                    foreach (bool item in bitERight)
-                    {
-                        Console.Write(item ? 1 : 0);
-                    }
-                    BitArray result = new BitArray(48);
-                    result = bitERight.Xor(listKeys[iterator]); // тут ключ (парвая часть с ключом)
+                    Console.WriteLine($"BitE: {string.Join("", bitERight.ToBits())}");
+                    BitArray resultXor = bitERight.Xor(listKeys[iterator]); // тут ключ (парвая часть с ключом)
+                    Console.WriteLine($"BitResultXor: {string.Join("", resultXor.ToBits())}");
+                    Console.WriteLine(resultXor.Length);
                     #region S_BOX
                     int[,,] S_BOX = new int[8, 4, 16]
                     {
@@ -182,121 +168,118 @@ namespace Homemade_DES
                     #endregion
                     //тут переменая где будут все 32 байта после цыкла
                     List<int> list = new List<int>();
-                    BitArray bitArray = new BitArray(32);
-                    int couter = 0;
+                    int counter = 0;
                     for (int i = 0; i < 8; i++)
                     {
                         BitArray dade = new BitArray(6);
                         for (int x = 0; x < 6; x++)
                         {
-                            //result[couter] = dade[x];
-                            dade[x] = result[couter];
-                            couter++;
+                            dade[x] = resultXor[counter];
+                            counter++;
                         }
-                        Console.WriteLine("");
-                        foreach (bool item in dade)
-                        {
-                            Console.Write(item ? 1 : 0);
-                        }
-                        Console.WriteLine("");
-                        Console.WriteLine(Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}",2) + "<- первый останий кордината");
-                        Console.WriteLine(Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}", 2)+ "<--- середина");
                         int test13 = S_BOX[i, Convert.ToInt16($"{Convert.ToInt16(dade[0])}{Convert.ToInt16(dade[5])}",2), Convert.ToInt16($"{Convert.ToInt16(dade[1])}{Convert.ToInt16(dade[2])}{Convert.ToInt16(dade[3])}{Convert.ToInt16(dade[4])}",2)];
                         list.Add(test13);
-                        Console.WriteLine(test13 + "итерация" + i);
-                        Console.WriteLine();
 
                     }
+                    BitArray bitArray = new BitArray(32);
                     string bitString = "";
                     foreach (int value in list)
                     {
-                        bitString += Convert.ToString(value, 2);
+                        bitString += Convert.ToString(value, 2).PadLeft(4, '0');
                     }
                     for (int i = 0; i < bitString.Length; i++)
                     {
                         bitArray[i] = bitString[i] == '1';
                     }
                     Console.WriteLine(bitArray.Length);
+                    Console.WriteLine($"BitArraySbox: {string.Join("", bitArray.ToBits())}");
                     int[] massP = new int[] { 16, 7, 20, 21, 29, 12, 28, 17, 1, 15, 23, 26, 5, 18, 31, 10, 2, 8, 24, 14, 32, 27, 3, 9, 19, 13, 30, 6, 22, 11, 4, 25 };
                     BitArray bitArrayP = new BitArray(32);
                     for (int i = 0; i < massP.Length; i++)
                     {
                         bitArrayP[i] = bitArray[massP[i] - 1];
                     }
-                    Console.WriteLine("ready");
+                    Console.WriteLine($"BitArrayP: {string.Join("", bitArrayP.ToBits())}");
                     //bitaaryp с левой частю
 
-                    Console.WriteLine("");
-                    foreach (bool item in bitArrayP)
-                    {
-                        Console.Write(item ? 1 : 0);
-                    }
-                    Console.WriteLine("");
-                    foreach (bool item in bitLeft)
-                    {
-                        Console.Write(item ? 1 : 0);
-                    }
-                    Console.WriteLine("");
-                    BitArray tested = new BitArray(bitLeft);
-                    tested.Xor(bitArrayP);
-                    foreach (bool item in tested)
-                    {
-                        Console.Write(item ? 1 : 0);
-                    }
-                    Console.WriteLine("");
-                    //tested
+                    BitArray BitArrayXorWithBitLeft = new BitArray(bitLeft);
+                    BitArrayXorWithBitLeft.Xor(bitArrayP);
+
+                    Console.WriteLine($"BitArrayXorWithBitLeft: {string.Join("",BitArrayXorWithBitLeft.ToBits())}");
+                    //BitArrayXorWithBitLeft
                     int rsultCounter = 0;
                     for (int i = 0; i < rsultRound.Length; i++)
                     {
-                        if (i <= 31)
+                        if (iterator == 15)
                         {
-                            rsultRound[i] = bitRight[rsultCounter];
-                            rsultCounter++;
-                            if (rsultCounter > 31)
+                            if (i <= 31)
                             {
-                                rsultCounter = 0;
+                                rsultRound[i] = BitArrayXorWithBitLeft[rsultCounter];
+                                rsultCounter++;
+                                if (rsultCounter > 31)
+                                {
+                                    rsultCounter = 0;
+                                }
+                            }
+                            else
+                            {
+                                rsultRound[i] = bitRight[rsultCounter];
+                                rsultCounter++;
                             }
                         }
                         else
                         {
-                            rsultRound[i] = tested[rsultCounter];
-                            rsultCounter++;
+
+
+                            if (i <= 31)
+                            {
+                                rsultRound[i] = bitRight[rsultCounter];
+                                rsultCounter++;
+                                if (rsultCounter > 31)
+                                {
+                                    rsultCounter = 0;
+                                }
+                            }
+                            else
+                            {
+                                rsultRound[i] = BitArrayXorWithBitLeft[rsultCounter];
+                                rsultCounter++;
+                            }
                         }
+                        
                     }
+                    Console.WriteLine($"RsultRound: {string.Join("", rsultRound.ToBits())}");
 
                 }
-                int[] massIP = new int[] { 40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38,6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25 };
-                BitArray bitArrayIP = new BitArray(64);
-                for (int i = 0; i < bitArrayIP.Length; i++)
+                //Console.WriteLine($"RsultRound: {string.Join("", rsultRound.ToBits())}");
+                int[] massIPRevers = new int[] { 40, 8, 48, 16, 56, 24, 64, 32, 39, 7, 47, 15, 55, 23, 63, 31, 38,6, 46, 14, 54, 22, 62, 30, 37, 5, 45, 13, 53, 21, 61, 29, 36, 4, 44, 12, 52, 20, 60, 28, 35, 3, 43, 11, 51, 19, 59, 27, 34, 2, 42, 10, 50, 18, 58, 26, 33, 1, 41, 9, 49, 17, 57, 25 };
+                BitArray  bitArrayIPRevers = new BitArray(64);
+                for (int i = 0; i < rsultRound.Length; i++)
                 {
-                    bitArrayIP[i] = rsultRound[massIP[i] - 1];
+                    bitArrayIPRevers[i] = rsultRound[massIPRevers[i] - 1];
                 }
-                listnewBlocksBits.Add(bitArrayIP);
+                Console.WriteLine($"BitArrayIPRevers: {string.Join("",bitArrayIPRevers.ToBits())}");
+                listnewBlocksBits.Add(bitArrayIPRevers);
             }
             //что-то тут не так выходит нет тот бинарный код в codetext 
-            Console.WriteLine("");
-            string codeText = "";
-            Console.WriteLine("БЛКОИ ОТПРАВИЛИСЬ");
+            string hexText = "";
             foreach (BitArray item in listnewBlocksBits)
             {
-                codeText += Convert.ToHexString(ConvertBitArrayToByteArray2(item));
-                foreach (bool bit in item)
-                {
-                    Console.Write(bit ? 1 : 0);
-                }
+                //byte[] test = ConvertToByteArray(item);
+                hexText += Convert.ToHexString(ConvertToByteArray(item));
                 //Console.WriteLine("test");
                 //передача
                 //byte[] test1 = Convert.FromHexString(codeText);
                 //BitArray testing = new BitArray(test1);
             }
             Console.WriteLine("END");
-            return codeText;
+            return hexText;
 
 
         }
-        public string Decoding(string text,string key) 
+        public string Decoding(string text,byte[] key) 
         {
-            List<BitArray> listKeys = CreateKeys([1]);
+            List<BitArray> listKeys = CreateKeys(key);
             //BitArray bitKey = new BitArray(UnicodeEncoding.UTF8.GetBytes(key));
             listKeys.Reverse();
             //Текст в блок битов List сохраняет блоки по 64 бит
@@ -612,20 +595,9 @@ namespace Homemade_DES
         private List<BitArray> CreateKeys(byte[] key)
         {
             List<BitArray> listKeys = new List<BitArray>();
-            //byte[] byteKey = new byte[key.Length / 2];
-
-            //for (int i = 0; i < byteKey.Length; i++)
-            //{
-            //    byteKey[i] = Convert.ToByte(key.Substring(i * 2, 2), 16);
-            //}
-            BitArray bitKey = new BitArray(key);
+            BitArray bitKey = new BitArray(64).Fill(key);
             BitArray a = new BitArray(new byte[] {19});
             Console.WriteLine($"Key: {string.Join("", bitKey.ToBits())}");
-            //Console.WriteLine("---------------" + bitKey.Length);
-            //foreach (bool bit in bitKey)
-            //{
-            //    Console.Write(bit ? 1 : 0);
-            //}
             int[] massPC1 = new int[] { 57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36, 63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4 };
             BitArray keyBit = new BitArray(56);
             for (int i = 0; i < massPC1.Length; i++)
@@ -660,7 +632,7 @@ namespace Homemade_DES
                 if (i == 0 || i == 1 || i == 8 || i == 15)
                 {
                     bitArrayC = LeftShiftC(bitArrayC, 1);
-                    bitArrayD = LeftShiftC(bitArrayC, 1);
+                    bitArrayD = LeftShiftC(bitArrayD, 1);
                 }
                 else
                 {
@@ -680,6 +652,10 @@ namespace Homemade_DES
                     bitArrayKey[p] = bitArrayFoundKey[massKeyGenerate[p] - 1];
                 }
                 listKeys.Add(bitArrayKey);
+            }
+            foreach (BitArray bitArray in listKeys)
+            {
+                Console.WriteLine($"Ключ: {string.Join("", bitArray.ToBits())}");
             }
             return listKeys;
         }
@@ -723,7 +699,7 @@ namespace Homemade_DES
 
             return arr2;
         }
-        private byte[] ConvertToByteArray(BitArray bitArray)
+        private static byte[] ConvertToByteArray(BitArray bitArray)
         {
             int bytes = (bitArray.Length + 7) / 8;
             byte[] arr2 = new byte[bytes];
@@ -732,7 +708,7 @@ namespace Homemade_DES
             {
                 if (bitArray[i])
                 {
-                    arr2[i / 8] |= (byte)(1 << (i % 8));
+                    arr2[i / 8] |= (byte)(1 << (7 - (i % 8))); // Используйте 7 - (i % 8) для правильной позиции
                 }
             }
 
