@@ -23,12 +23,13 @@ namespace Homemade_DES
 
             //byte[] buffer = UnicodeEncoding.UTF8.GetBytes(text);
             string erptext = des.Coding(text, key);
+            byte[] byteErptext = Convert.FromHexString(erptext);
             //Console.WriteLine(Convert.ToHexString(buffer));
-            //string decrypt = des.Decoding(erptext, key);
+            string decrypt = des.Decoding(byteErptext, key);
             Console.WriteLine("Ключ " + key);
             Console.WriteLine("erptext =" + erptext);
             Console.WriteLine("початковий текст " + Convert.ToHexString(text));
-            //Console.WriteLine("decrypt= " + decrypt);
+            Console.WriteLine("decrypt= " + decrypt);
             Console.ReadLine();
             //            byte[] dad = new byte[8];
             //            byte[] cad = new byte[8];
