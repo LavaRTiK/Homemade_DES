@@ -352,6 +352,7 @@ namespace Homemade_DES
                         bitERight[i] = bitRight[massE[i] - 1];
                     }
                     Console.WriteLine();
+                    Console.WriteLine();
                     Console.WriteLine($"BitE: {string.Join("", bitERight.ToBits())}");
                     BitArray resultXor = bitERight.Xor(listKeys[iterator]); // тут ключ (парвая часть с ключом)
                     Console.WriteLine($"BitResultXor: {string.Join("", resultXor.ToBits())}");
